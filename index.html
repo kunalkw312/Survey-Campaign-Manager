@@ -3,160 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sample Management Platform Demo</title>
+    <title>Modern Sample Management</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
                     colors: {
-                        brand: { 500: '#6366f1', 600: '#4f46e5' }, 
-                        darkbase: '#0f172a', 
-                        darkcard: '#1e293b'  
+                        brand: { 500: '#6366f1', 600: '#4f46e5' },
+                        // Using Zinc for a more modern, sophisticated dark/light feel
+                        darkbase: '#09090b', 
+                        darkcard: '#18181b',
+                        darkborder: '#27272a'
                     }
                 }
             }
         }
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body, div, span, a, input, select, button { transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
-        .view-section { display: none; }
-        .view-section.active { display: block; animation: fadeIn 0.4s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        /* Modal Background Fade */
-        .modal-overlay { background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); }
-        /* Progress Bar Animation Classes */
-        .progress-bar-fill { width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* Smooth, modern transitions */
+        body, div, span, a, input, select, button { transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease; }
+        
+        .view-section { display: none; opacity: 0; }
+        .view-section.active { display: block; animation: subtleFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        @keyframes subtleFadeIn { 
+            from { opacity: 0; transform: translateY(8px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        
+        /* Modal Blur Overlay */
+        .modal-overlay { background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); }
+        
+        /* Modern Progress Bar */
+        .progress-bar-fill { width: 0%; transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
+
+        /* Custom Scrollbar for minimalistic look */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 dark:bg-darkbase dark:text-gray-100 h-screen flex overflow-hidden">
+<body class="bg-[#fafafa] text-zinc-900 dark:bg-darkbase dark:text-zinc-100 h-screen flex overflow-hidden font-sans antialiased">
 
-    <aside class="w-64 bg-white dark:bg-darkcard border-r border-gray-200 dark:border-gray-700 flex flex-col z-20">
-        <div class="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700">
-            <i class="fa-solid fa-chart-network text-brand-500 text-xl mr-3"></i>
-            <span class="font-bold text-lg tracking-wide">SampleFlow</span>
+    <aside class="w-64 bg-white dark:bg-darkbase border-r border-zinc-200 dark:border-darkborder flex flex-col z-20">
+        <div class="h-20 flex items-center px-8">
+            <div class="bg-brand-500/10 p-2 rounded-xl mr-3">
+                <i data-lucide="hexagon" class="text-brand-500 w-6 h-6"></i>
+            </div>
+            <span class="font-bold text-xl tracking-tight">Sample<span class="text-brand-500">Flow</span></span>
         </div>
-        <nav class="flex-1 py-4 px-3 space-y-1">
-            <button onclick="navigate('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400">
-                <i class="fa-solid fa-table-columns w-6"></i> Dashboard
+        
+        <div class="px-6 pb-2 pt-4 text-[11px] font-semibold tracking-wider text-zinc-400 uppercase">Menu</div>
+        <nav class="flex-1 px-4 space-y-1.5">
+            <button onclick="navigate('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl bg-zinc-100 dark:bg-darkcard text-zinc-900 dark:text-white transition-all">
+                <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3 text-zinc-500 dark:text-zinc-400 nav-icon"></i> Dashboard
             </button>
-            <button onclick="navigate('create')" id="nav-create" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700/50">
-                <i class="fa-solid fa-folder-plus w-6"></i> Create Project
+            <button onclick="navigate('create')" id="nav-create" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100/50 dark:hover:bg-darkcard/50 transition-all">
+                <i data-lucide="folder-plus" class="w-5 h-5 mr-3 opacity-70 nav-icon"></i> Create Project
             </button>
-            <button onclick="navigate('projects')" id="nav-projects" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700/50">
-                <i class="fa-solid fa-list-check w-6"></i> All Projects
+            <button onclick="navigate('projects')" id="nav-projects" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100/50 dark:hover:bg-darkcard/50 transition-all">
+                <i data-lucide="layers" class="w-5 h-5 mr-3 opacity-70 nav-icon"></i> All Projects
             </button>
-            <button onclick="navigate('vendor')" id="nav-vendor" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700/50">
-                <i class="fa-solid fa-users-gear w-6"></i> Add Vendor
+            <button onclick="navigate('vendor')" id="nav-vendor" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100/50 dark:hover:bg-darkcard/50 transition-all">
+                <i data-lucide="users" class="w-5 h-5 mr-3 opacity-70 nav-icon"></i> Add Vendor
             </button>
-            <button onclick="navigate('activity')" id="nav-activity" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700/50 hidden">
-                Activity Log
+            <button onclick="navigate('activity')" id="nav-activity" class="nav-btn hidden w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100/50 dark:hover:bg-darkcard/50 transition-all">
+                <i data-lucide="activity" class="w-5 h-5 mr-3 opacity-70 nav-icon"></i> Activity Log
             </button>
         </nav>
-        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
-            <button class="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400">
-                <i class="fa-solid fa-arrow-right-from-bracket w-6"></i> Logout
+        
+        <div class="p-4">
+            <button class="w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all">
+                <i data-lucide="log-out" class="w-5 h-5 mr-3"></i> Logout
             </button>
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col h-screen overflow-y-auto relative">
-        <header class="h-16 flex items-center justify-between px-8 bg-white/80 dark:bg-darkbase/80 backdrop-blur-md sticky top-0 z-10 border-b border-gray-200 dark:border-gray-800">
-            <h1 id="page-title" class="text-xl font-semibold">Dashboard Overview</h1>
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto relative bg-[#fafafa] dark:bg-[#09090b]">
+        
+        <header class="h-20 flex items-center justify-between px-10 sticky top-0 z-10 bg-[#fafafa]/80 dark:bg-[#09090b]/80 backdrop-blur-xl border-b border-transparent dark:border-transparent transition-colors">
+            <h1 id="page-title" class="text-2xl font-semibold tracking-tight text-zinc-800 dark:text-zinc-100">Overview</h1>
+            
             <div class="flex items-center space-x-6">
-                <button onclick="toggleTheme()" class="flex items-center gap-3 px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600 transition-all focus:outline-none focus:ring-2 focus:ring-brand-500">
-                    <i id="theme-icon" class="fa-solid fa-sun text-yellow-500 text-lg"></i>
-                    <span id="theme-text" class="text-sm font-medium text-gray-700 dark:text-gray-200">Light Mode</span>
+                <button onclick="toggleTheme()" class="group flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white dark:bg-darkcard border border-zinc-200 dark:border-darkborder shadow-sm hover:shadow-md transition-all focus:outline-none">
+                    <i id="theme-icon" data-lucide="sun" class="w-4 h-4 text-zinc-400 group-hover:text-amber-500 transition-colors"></i>
+                    <span id="theme-text" class="text-xs font-semibold tracking-wide text-zinc-600 dark:text-zinc-300 uppercase">Light</span>
                 </button>
 
-                <div class="h-10 w-10 rounded-full bg-brand-500 text-white flex items-center justify-center font-bold shadow-lg text-lg">
-                    A
+                <div class="h-10 w-10 rounded-full bg-gradient-to-tr from-brand-600 to-brand-400 text-white flex items-center justify-center font-bold shadow-md shadow-brand-500/20 text-sm cursor-pointer hover:opacity-90 transition-opacity">
+                    KW
                 </div>
             </div>
         </header>
 
-        <div class="p-8 max-w-7xl mx-auto w-full">
+        <div class="p-10 max-w-[1400px] mx-auto w-full">
             
-            <div id="view-dashboard" class="view-section active space-y-6">
+            <div id="view-dashboard" class="view-section active space-y-8">
+                
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">TOTAL CLICKS</p>
-                                <h3 class="text-3xl font-bold mt-2" id="dash-clicks">12,450</h3>
-                            </div>
-                            <div class="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-500"><i class="fa-solid fa-hand-pointer text-xl"></i></div>
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-2xl shadow-sm border border-zinc-100 dark:border-darkborder relative overflow-hidden group">
+                        <div class="absolute -right-6 -top-6 text-zinc-50 dark:text-zinc-800/50 transition-transform group-hover:scale-110"><i data-lucide="mouse-pointer-click" class="w-32 h-32"></i></div>
+                        <div class="relative z-10">
+                            <p class="text-xs font-semibold text-zinc-400 dark:text-zinc-500 tracking-wider uppercase mb-2">Total Clicks</p>
+                            <h3 class="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100" id="dash-clicks">12,450</h3>
                         </div>
                     </div>
-                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">COMPLETES</p>
-                                <h3 class="text-3xl font-bold mt-2 text-green-600 dark:text-green-400" id="dash-completes">2,840</h3>
-                            </div>
-                            <div class="p-2 bg-green-50 dark:bg-green-900/30 rounded-lg text-green-500"><i class="fa-solid fa-circle-check text-xl"></i></div>
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-2xl shadow-sm border border-zinc-100 dark:border-darkborder relative overflow-hidden group">
+                        <div class="absolute -right-6 -top-6 text-zinc-50 dark:text-zinc-800/50 transition-transform group-hover:scale-110"><i data-lucide="check-circle-2" class="w-32 h-32"></i></div>
+                        <div class="relative z-10">
+                            <p class="text-xs font-semibold text-zinc-400 dark:text-zinc-500 tracking-wider uppercase mb-2">Completes</p>
+                            <h3 class="text-4xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400" id="dash-completes">2,840</h3>
                         </div>
                     </div>
-                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">INCIDENCE RATE</p>
-                                <h3 class="text-3xl font-bold mt-2">22.8%</h3>
-                            </div>
-                            <div class="p-2 bg-purple-50 dark:bg-purple-900/30 rounded-lg text-purple-500"><i class="fa-solid fa-chart-line text-xl"></i></div>
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-2xl shadow-sm border border-zinc-100 dark:border-darkborder relative overflow-hidden group">
+                        <div class="absolute -right-6 -top-6 text-zinc-50 dark:text-zinc-800/50 transition-transform group-hover:scale-110"><i data-lucide="trending-up" class="w-32 h-32"></i></div>
+                        <div class="relative z-10">
+                            <p class="text-xs font-semibold text-zinc-400 dark:text-zinc-500 tracking-wider uppercase mb-2">Incidence Rate</p>
+                            <h3 class="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100">22.8%</h3>
                         </div>
                     </div>
-                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">ACTIVE PROJECTS</p>
-                                <h3 class="text-3xl font-bold mt-2" id="dash-active-count">0</h3>
-                            </div>
-                            <div class="p-2 bg-orange-50 dark:bg-orange-900/30 rounded-lg text-orange-500"><i class="fa-solid fa-folder-open text-xl"></i></div>
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-2xl shadow-sm border border-zinc-100 dark:border-darkborder relative overflow-hidden group">
+                        <div class="absolute -right-6 -top-6 text-zinc-50 dark:text-zinc-800/50 transition-transform group-hover:scale-110"><i data-lucide="folder-open" class="w-32 h-32"></i></div>
+                        <div class="relative z-10">
+                            <p class="text-xs font-semibold text-zinc-400 dark:text-zinc-500 tracking-wider uppercase mb-2">Active Projects</p>
+                            <h3 class="text-4xl font-bold tracking-tight text-brand-600 dark:text-brand-400" id="dash-active-count">0</h3>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 lg:col-span-1">
-                        <h4 class="font-semibold mb-4 text-gray-700 dark:text-gray-200">Status Breakdown</h4>
-                        <div class="space-y-4">
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                    
+                    <div class="bg-white dark:bg-darkcard p-8 rounded-2xl shadow-sm border border-zinc-100 dark:border-darkborder xl:col-span-1">
+                        <h4 class="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-6 flex items-center"><i data-lucide="pie-chart" class="w-4 h-4 mr-2 text-zinc-400"></i> Analytics Breakdown</h4>
+                        <div class="space-y-6">
                             <div>
-                                <div class="flex justify-between text-sm mb-1"><span class="text-gray-500">Completes</span><span class="font-medium">2,840</span></div>
-                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2"><div class="bg-green-500 h-2 rounded-full progress-bar-fill" data-target="45%"></div></div>
+                                <div class="flex justify-between text-sm mb-2"><span class="text-zinc-500 font-medium">Completes</span><span class="font-bold">45%</span></div>
+                                <div class="w-full bg-zinc-100 dark:bg-zinc-800/50 rounded-full h-1.5 overflow-hidden"><div class="bg-emerald-500 h-full rounded-full progress-bar-fill" data-target="45%"></div></div>
                             </div>
                             <div>
-                                <div class="flex justify-between text-sm mb-1"><span class="text-gray-500">Terminates</span><span class="font-medium">8,100</span></div>
-                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2"><div class="bg-red-500 h-2 rounded-full progress-bar-fill" data-target="70%"></div></div>
+                                <div class="flex justify-between text-sm mb-2"><span class="text-zinc-500 font-medium">Terminates</span><span class="font-bold">70%</span></div>
+                                <div class="w-full bg-zinc-100 dark:bg-zinc-800/50 rounded-full h-1.5 overflow-hidden"><div class="bg-rose-500 h-full rounded-full progress-bar-fill" data-target="70%"></div></div>
                             </div>
                             <div>
-                                <div class="flex justify-between text-sm mb-1"><span class="text-gray-500">Quota Full</span><span class="font-medium">1,200</span></div>
-                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2"><div class="bg-yellow-500 h-2 rounded-full progress-bar-fill" data-target="20%"></div></div>
+                                <div class="flex justify-between text-sm mb-2"><span class="text-zinc-500 font-medium">Quota Full</span><span class="font-bold">20%</span></div>
+                                <div class="w-full bg-zinc-100 dark:bg-zinc-800/50 rounded-full h-1.5 overflow-hidden"><div class="bg-amber-500 h-full rounded-full progress-bar-fill" data-target="20%"></div></div>
                             </div>
                             <div>
-                                <div class="flex justify-between text-sm mb-1"><span class="text-gray-500">Security / Bots</span><span class="font-medium">310</span></div>
-                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2"><div class="bg-gray-500 h-2 rounded-full progress-bar-fill" data-target="8%"></div></div>
+                                <div class="flex justify-between text-sm mb-2"><span class="text-zinc-500 font-medium">Security Stops</span><span class="font-bold">8%</span></div>
+                                <div class="w-full bg-zinc-100 dark:bg-zinc-800/50 rounded-full h-1.5 overflow-hidden"><div class="bg-zinc-400 dark:bg-zinc-600 h-full rounded-full progress-bar-fill" data-target="8%"></div></div>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 lg:col-span-2 overflow-x-auto flex flex-col">
-                        <div class="flex justify-between items-center mb-4">
-                            <h4 class="font-semibold text-gray-700 dark:text-gray-200">Recent Activity</h4>
-                            <button onclick="navigate('activity')" class="text-sm text-brand-500 hover:text-brand-600 font-medium transition-colors">View all &rarr;</button>
+
+                    <div class="bg-white dark:bg-darkcard rounded-2xl shadow-sm border border-zinc-100 dark:border-darkborder xl:col-span-2 flex flex-col overflow-hidden">
+                        <div class="p-6 border-b border-zinc-100 dark:border-darkborder flex justify-between items-center bg-white/50 dark:bg-darkcard/50">
+                            <h4 class="text-base font-semibold text-zinc-800 dark:text-zinc-100 flex items-center"><i data-lucide="activity" class="w-4 h-4 mr-2 text-zinc-400"></i> Live Activity</h4>
+                            <button onclick="navigate('activity')" class="text-xs font-semibold text-brand-500 hover:text-brand-600 uppercase tracking-wider transition-colors">View All</button>
                         </div>
-                        <div class="flex-1">
-                            <table class="w-full text-left text-sm">
-                                <thead class="text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex-1 overflow-x-auto p-2">
+                            <table class="w-full text-left text-sm border-collapse">
+                                <thead class="text-zinc-400 text-xs uppercase tracking-wider">
                                     <tr>
-                                        <th class="pb-3 font-medium">UID</th>
-                                        <th class="pb-3 font-medium">Project</th>
-                                        <th class="pb-3 font-medium">Status</th>
-                                        <th class="pb-3 font-medium">Time</th>
+                                        <th class="px-4 py-3 font-medium">Respondent UID</th>
+                                        <th class="px-4 py-3 font-medium">Project</th>
+                                        <th class="px-4 py-3 font-medium">Status</th>
+                                        <th class="px-4 py-3 font-medium text-right">Time</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-100 dark:divide-gray-800" id="activity-table-body-short">
+                                <tbody class="divide-y divide-zinc-50 dark:divide-darkborder/50" id="activity-table-body-short">
                                     </tbody>
                             </table>
                         </div>
@@ -165,126 +192,132 @@
             </div>
 
             <div id="view-activity" class="view-section">
-                <div class="bg-white dark:bg-darkcard rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
-                        <h3 class="font-semibold">Comprehensive Traffic Log</h3>
-                        <div class="relative w-64">
-                            <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400"></i>
-                            <input type="text" placeholder="Search UID or Project..." class="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg outline-none focus:border-brand-500 text-sm">
+                <div class="bg-white dark:bg-darkcard rounded-2xl shadow-sm border border-zinc-100 dark:border-darkborder overflow-hidden flex flex-col h-[700px]">
+                    <div class="p-6 border-b border-zinc-100 dark:border-darkborder flex flex-col sm:flex-row justify-between items-center gap-4 bg-zinc-50/50 dark:bg-darkbase/30">
+                        <div class="relative w-full max-w-md group">
+                            <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 group-focus-within:text-brand-500 transition-colors"></i>
+                            <input type="text" placeholder="Search logs by UID or Project..." class="w-full pl-11 pr-4 py-2.5 bg-white dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-xl outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 text-sm transition-all shadow-sm">
                         </div>
+                        <button class="px-4 py-2 text-sm font-medium rounded-xl border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center transition-all">
+                            <i data-lucide="filter" class="w-4 h-4 mr-2"></i> Filter
+                        </button>
                     </div>
-                    <div class="overflow-x-auto h-[600px] overflow-y-auto">
+                    <div class="overflow-auto flex-1 p-2">
                         <table class="w-full text-left text-sm whitespace-nowrap">
-                            <thead class="bg-white dark:bg-darkcard text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 sticky top-0 shadow-sm z-10">
+                            <thead class="text-zinc-400 text-xs uppercase tracking-wider sticky top-0 bg-white dark:bg-darkcard shadow-sm z-10">
                                 <tr>
                                     <th class="px-6 py-4 font-medium">Transaction ID</th>
-                                    <th class="px-6 py-4 font-medium">Respondent UID</th>
+                                    <th class="px-6 py-4 font-medium">UID</th>
                                     <th class="px-6 py-4 font-medium">Project ID</th>
                                     <th class="px-6 py-4 font-medium">Status</th>
                                     <th class="px-6 py-4 font-medium">IP Address</th>
-                                    <th class="px-6 py-4 font-medium">Timestamp</th>
+                                    <th class="px-6 py-4 font-medium text-right">Timestamp</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-100 dark:divide-gray-800" id="activity-table-body-full">
+                            <tbody class="divide-y divide-zinc-50 dark:divide-darkborder" id="activity-table-body-full">
                                 </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <div id="view-create" class="view-section max-w-4xl">
-                <form id="create-project-form" class="space-y-6">
-                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                        <h3 class="text-lg font-semibold mb-4 border-b border-gray-200 dark:border-gray-700 pb-2"><i class="fa-solid fa-circle-info text-brand-500 mr-2"></i>Project Information</h3>
+            <div id="view-create" class="view-section max-w-4xl mx-auto">
+                <form id="create-project-form" class="space-y-8">
+                    
+                    <div class="bg-white dark:bg-darkcard p-8 rounded-2xl shadow-sm border border-zinc-100 dark:border-darkborder">
+                        <h3 class="text-sm font-bold tracking-wider uppercase text-zinc-500 mb-6 flex items-center"><i data-lucide="info" class="w-4 h-4 mr-2"></i> Core Information</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Public Survey Name *</label>
-                                <input type="text" id="cp-name" required placeholder="e.g. Wellness Study 2024" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
+                                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Survey Name *</label>
+                                <input type="text" id="cp-name" required placeholder="e.g. Q3 Consumer Trends" class="w-full bg-zinc-50/50 dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-brand-500 focus:bg-white dark:focus:bg-[#18181b] transition-all text-sm">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Client *</label>
-                                <select id="cp-client" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
-                                    <option value="">-- Select Client --</option>
+                                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Client *</label>
+                                <select id="cp-client" required class="w-full bg-zinc-50/50 dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-brand-500 focus:bg-white dark:focus:bg-[#18181b] transition-all text-sm appearance-none">
+                                    <option value="">Select an organization</option>
                                     <option value="Acme Corp">Acme Corp</option>
                                     <option value="Global Insights">Global Insights</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Project Type</label>
-                                <select class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
-                                    <option>Programmatic</option>
-                                    <option>Manual</option>
+                                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Project Type</label>
+                                <select class="w-full bg-zinc-50/50 dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-brand-500 transition-all text-sm appearance-none">
+                                    <option>Programmatic API</option>
+                                    <option>Manual Upload</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Survey Type</label>
-                                <select class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
-                                    <option>B2C</option>
-                                    <option>B2B</option>
+                                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Target Audience</label>
+                                <select class="w-full bg-zinc-50/50 dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-brand-500 transition-all text-sm appearance-none">
+                                    <option>B2C (Consumer)</option>
+                                    <option>B2B (Business)</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                        <h3 class="text-lg font-semibold mb-4 border-b border-gray-200 dark:border-gray-700 pb-2"><i class="fa-solid fa-chart-simple text-brand-500 mr-2"></i>Sample Specifications</h3>
+                    <div class="bg-white dark:bg-darkcard p-8 rounded-2xl shadow-sm border border-zinc-100 dark:border-darkborder">
+                        <h3 class="text-sm font-bold tracking-wider uppercase text-zinc-500 mb-6 flex items-center"><i data-lucide="sliders" class="w-4 h-4 mr-2"></i> Specifications</h3>
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Completes</label>
-                                <input type="number" id="cp-target" required value="100" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 outline-none focus:border-brand-500">
+                                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Completes</label>
+                                <input type="number" id="cp-target" required value="100" class="w-full bg-zinc-50/50 dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-brand-500 text-sm">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">CPI ($)</label>
-                                <input type="number" step="0.01" value="2.50" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 outline-none focus:border-brand-500">
+                                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">CPI ($)</label>
+                                <input type="number" step="0.01" value="2.50" class="w-full bg-zinc-50/50 dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-brand-500 text-sm">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Estimated IR (%)</label>
-                                <input type="number" value="50" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 outline-none focus:border-brand-500">
+                                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Est. IR (%)</label>
+                                <input type="number" value="50" class="w-full bg-zinc-50/50 dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-brand-500 text-sm">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">LOI (mins)</label>
-                                <input type="number" value="10" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 outline-none focus:border-brand-500">
+                                <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">LOI (Min)</label>
+                                <input type="number" value="10" class="w-full bg-zinc-50/50 dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-brand-500 text-sm">
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                        <h3 class="text-lg font-semibold mb-4 border-b border-gray-200 dark:border-gray-700 pb-2"><i class="fa-solid fa-link text-brand-500 mr-2"></i>Client Survey Link</h3>
+                    <div class="bg-white dark:bg-darkcard p-8 rounded-2xl shadow-sm border border-zinc-100 dark:border-darkborder">
+                        <h3 class="text-sm font-bold tracking-wider uppercase text-zinc-500 mb-6 flex items-center"><i data-lucide="link" class="w-4 h-4 mr-2"></i> Client URL</h3>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Live URL *</label>
-                            <input type="url" required placeholder="https://client-survey.com/start?pid=[PID]&uid=[UID]" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 outline-none focus:border-brand-500 font-mono text-sm">
+                            <input type="url" required placeholder="https://client-survey.com/start?pid=[PID]&uid=[UID]" class="w-full bg-zinc-50/50 dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-brand-500 font-mono text-sm">
                         </div>
                     </div>
 
-                    <div class="flex justify-end gap-4 mt-8">
-                        <button type="button" onclick="navigate('dashboard')" class="px-6 py-2.5 rounded-lg font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Cancel</button>
-                        <button type="submit" class="px-6 py-2.5 rounded-lg font-medium bg-brand-600 hover:bg-brand-500 text-white shadow-lg shadow-brand-500/30 transition-all">Launch Project</button>
+                    <div class="flex justify-end gap-4">
+                        <button type="button" onclick="navigate('dashboard')" class="px-6 py-3 rounded-xl font-medium border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-sm">Cancel Setup</button>
+                        <button type="submit" class="px-6 py-3 rounded-xl font-medium bg-brand-600 hover:bg-brand-500 text-white shadow-lg shadow-brand-500/20 transition-all flex items-center text-sm">
+                            Launch Project <i data-lucide="rocket" class="w-4 h-4 ml-2"></i>
+                        </button>
                     </div>
                 </form>
             </div>
 
             <div id="view-projects" class="view-section">
-                <div class="bg-white dark:bg-darkcard rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
-                        <div class="relative w-64">
-                            <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400"></i>
-                            <input type="text" placeholder="Search projects..." class="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg outline-none focus:border-brand-500 text-sm">
+                <div class="bg-white dark:bg-darkcard rounded-2xl shadow-sm border border-zinc-100 dark:border-darkborder overflow-hidden">
+                    <div class="p-6 border-b border-zinc-100 dark:border-darkborder flex justify-between items-center bg-zinc-50/50 dark:bg-darkbase/30">
+                        <div class="relative w-64 group">
+                            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 group-focus-within:text-brand-500 transition-colors"></i>
+                            <input type="text" placeholder="Search projects..." class="w-full pl-9 pr-4 py-2 bg-white dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-lg outline-none focus:border-brand-500 text-sm shadow-sm transition-all">
                         </div>
-                        <button onclick="navigate('create')" class="bg-brand-600 hover:bg-brand-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">+ New Project</button>
+                        <button onclick="navigate('create')" class="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-5 py-2.5 rounded-xl text-sm font-semibold shadow-md hover:opacity-90 transition-opacity flex items-center">
+                            <i data-lucide="plus" class="w-4 h-4 mr-2"></i> New Project
+                        </button>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm whitespace-nowrap">
-                            <thead class="bg-gray-50 dark:bg-gray-800/80 text-gray-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
+                    <div class="overflow-x-auto p-2">
+                        <table class="w-full text-left text-sm whitespace-nowrap border-collapse">
+                            <thead class="text-zinc-400 text-xs uppercase tracking-wider border-b border-zinc-100 dark:border-darkborder">
                                 <tr>
-                                    <th class="px-6 py-4 font-semibold">Project ID</th>
-                                    <th class="px-6 py-4 font-semibold">Name</th>
-                                    <th class="px-6 py-4 font-semibold">Client</th>
-                                    <th class="px-6 py-4 font-semibold">Status</th>
-                                    <th class="px-6 py-4 font-semibold text-right">Progress</th>
-                                    <th class="px-6 py-4 font-semibold text-center">Actions</th>
+                                    <th class="px-6 py-4 font-medium">ID</th>
+                                    <th class="px-6 py-4 font-medium">Name</th>
+                                    <th class="px-6 py-4 font-medium">Client</th>
+                                    <th class="px-6 py-4 font-medium">Status</th>
+                                    <th class="px-6 py-4 font-medium text-right">Delivery</th>
+                                    <th class="px-6 py-4 font-medium text-center">Manage</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="projects-table-body">
+                            <tbody class="divide-y divide-zinc-50 dark:divide-darkborder/50" id="projects-table-body">
                                 </tbody>
                         </table>
                     </div>
@@ -292,43 +325,45 @@
             </div>
 
             <div id="view-vendor" class="view-section max-w-5xl mx-auto space-y-8">
-                <form id="add-vendor-form" class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold mb-4 border-b border-gray-200 dark:border-gray-700 pb-2"><i class="fa-solid fa-user-plus text-brand-500 mr-2"></i>Register New Vendor</h3>
+                <form id="add-vendor-form" class="bg-white dark:bg-darkcard p-8 rounded-2xl shadow-sm border border-zinc-100 dark:border-darkborder">
+                    <h3 class="text-sm font-bold tracking-wider uppercase text-zinc-500 mb-6 flex items-center"><i data-lucide="network" class="w-4 h-4 mr-2"></i> Register Vendor</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Vendor Name *</label>
-                            <input type="text" id="cv-name" required placeholder="e.g. SampleCube" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 outline-none focus:border-brand-500">
+                            <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Vendor Name *</label>
+                            <input type="text" id="cv-name" required placeholder="e.g. SampleCube" class="w-full bg-zinc-50/50 dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-brand-500 transition-all text-sm">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Contact Email</label>
-                            <input type="email" id="cv-email" placeholder="api@vendor.com" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 outline-none focus:border-brand-500">
+                            <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Contact Email</label>
+                            <input type="email" id="cv-email" placeholder="api@vendor.com" class="w-full bg-zinc-50/50 dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-brand-500 transition-all text-sm">
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Postback / S2S URL</label>
-                            <input type="url" placeholder="https://vendor.com/postback?uid=[UID]&status=[STATUS]" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 outline-none focus:border-brand-500 font-mono text-sm">
+                            <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">S2S Postback URL</label>
+                            <input type="url" placeholder="https://vendor.com/postback?uid=[UID]&status=[STATUS]" class="w-full bg-zinc-50/50 dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 outline-none focus:border-brand-500 font-mono text-sm transition-all">
                         </div>
                     </div>
-                    <div class="mt-6 flex justify-end">
-                        <button type="submit" class="px-6 py-2.5 rounded-lg font-medium bg-brand-600 hover:bg-brand-500 text-white transition-all">Add Vendor</button>
+                    <div class="mt-8 flex justify-end">
+                        <button type="submit" class="px-6 py-3 rounded-xl font-medium bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md hover:opacity-90 transition-all text-sm flex items-center">
+                            Save Partner <i data-lucide="check" class="w-4 h-4 ml-2"></i>
+                        </button>
                     </div>
                 </form>
 
-                <div class="bg-white dark:bg-darkcard rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-                        <h3 class="font-semibold text-gray-700 dark:text-gray-200">Active Vendors</h3>
+                <div class="bg-white dark:bg-darkcard rounded-2xl shadow-sm border border-zinc-100 dark:border-darkborder overflow-hidden">
+                    <div class="p-6 border-b border-zinc-100 dark:border-darkborder bg-zinc-50/50 dark:bg-darkbase/30">
+                        <h3 class="text-sm font-bold tracking-wider uppercase text-zinc-500">Active Supply Partners</h3>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-gray-50 dark:bg-gray-800/80 text-gray-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
+                    <div class="overflow-x-auto p-2">
+                        <table class="w-full text-left text-sm whitespace-nowrap">
+                            <thead class="text-zinc-400 text-xs uppercase tracking-wider border-b border-zinc-100 dark:border-darkborder">
                                 <tr>
-                                    <th class="px-6 py-4 font-semibold">Vendor ID</th>
-                                    <th class="px-6 py-4 font-semibold">Vendor Name</th>
-                                    <th class="px-6 py-4 font-semibold">Contact Email</th>
-                                    <th class="px-6 py-4 font-semibold">Status</th>
-                                    <th class="px-6 py-4 font-semibold text-center">Actions</th>
+                                    <th class="px-6 py-4 font-medium">Vendor ID</th>
+                                    <th class="px-6 py-4 font-medium">Name</th>
+                                    <th class="px-6 py-4 font-medium">Email</th>
+                                    <th class="px-6 py-4 font-medium">Status</th>
+                                    <th class="px-6 py-4 font-medium text-center">Action</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="vendors-table-body">
+                            <tbody class="divide-y divide-zinc-50 dark:divide-darkborder/50" id="vendors-table-body">
                                 </tbody>
                         </table>
                     </div>
@@ -338,40 +373,44 @@
         </div>
     </main>
 
-    <div id="edit-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay hidden">
-        <div class="bg-white dark:bg-darkcard rounded-xl shadow-2xl w-full max-w-md border border-gray-200 dark:border-gray-700 transform transition-all">
-            <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Edit Project</h3>
-                <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                    <i class="fa-solid fa-xmark text-xl"></i>
+    <div id="edit-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-2xl w-full max-w-sm border border-zinc-200 dark:border-darkborder transform scale-95 transition-all duration-300 overflow-hidden" id="edit-modal-content">
+            <div class="flex justify-between items-center px-6 py-5 border-b border-zinc-100 dark:border-darkborder bg-zinc-50/50 dark:bg-darkbase/50">
+                <h3 class="text-base font-semibold text-zinc-800 dark:text-zinc-100">Quick Edit</h3>
+                <button onclick="closeEditModal()" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 p-1 rounded-md hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
-            <form id="edit-project-form" class="p-6 space-y-4">
+            <form id="edit-project-form" class="p-6 space-y-5">
                 <input type="hidden" id="edit-id">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Project Name</label>
-                    <input type="text" id="edit-name" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 outline-none focus:border-brand-500">
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Project Name</label>
+                    <input type="text" id="edit-name" required class="w-full bg-zinc-50/50 dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 outline-none focus:border-brand-500 text-sm transition-all">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Completes</label>
-                    <input type="number" id="edit-target" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 outline-none focus:border-brand-500">
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Target Completes</label>
+                    <input type="number" id="edit-target" required class="w-full bg-zinc-50/50 dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 outline-none focus:border-brand-500 text-sm transition-all">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
-                    <select id="edit-status" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 outline-none focus:border-brand-500">
+                    <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Status</label>
+                    <select id="edit-status" class="w-full bg-zinc-50/50 dark:bg-[#111113] border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-2.5 outline-none focus:border-brand-500 text-sm transition-all appearance-none">
                         <option value="Active">Active</option>
                         <option value="Completed">Completed</option>
+                        <option value="Paused">Paused</option>
                     </select>
                 </div>
-                <div class="flex justify-end gap-3 mt-6">
-                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 rounded-lg font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Cancel</button>
-                    <button type="submit" class="px-4 py-2 rounded-lg font-medium bg-brand-600 hover:bg-brand-500 text-white transition-colors">Save Changes</button>
+                <div class="flex justify-end gap-3 mt-8">
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2.5 rounded-xl text-sm font-medium border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">Cancel</button>
+                    <button type="submit" class="px-4 py-2.5 rounded-xl text-sm font-medium bg-brand-600 hover:bg-brand-500 text-white transition-colors shadow-md">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
+        // Initialize Lucide Icons immediately
+        lucide.createIcons();
+
         // State Management Data
         let appData = {
             projects: [
@@ -388,7 +427,13 @@
 
         // Generate extensive dummy activity data
         const statuses = ['Complete', 'Terminate', 'Quota Full', 'Security'];
-        const colors = { 'Complete': 'text-green-500', 'Terminate': 'text-red-500', 'Quota Full': 'text-yellow-500', 'Security': 'text-gray-500' };
+        const colors = { 
+            'Complete': 'text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-800/30', 
+            'Terminate': 'text-rose-500 bg-rose-50 dark:bg-rose-500/10 border-rose-200 dark:border-rose-800/30', 
+            'Quota Full': 'text-amber-500 bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-800/30', 
+            'Security': 'text-zinc-500 bg-zinc-100 dark:bg-zinc-500/10 border-zinc-200 dark:border-zinc-800/30' 
+        };
+        
         for(let i = 0; i < 25; i++) {
             let stat = statuses[Math.floor(Math.random() * statuses.length)];
             appData.activity.push({
@@ -396,53 +441,52 @@
                 uid: 'usr_' + Math.random().toString(36).substr(2, 6),
                 project: i % 2 === 0 ? 'PRO-1024' : 'PRO-1025',
                 status: stat,
-                color: colors[stat],
+                colorClass: colors[stat],
                 ip: `192.168.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`,
-                time: `${Math.floor(Math.random() * 60)} mins ago`
+                time: `${Math.floor(Math.random() * 60)}m ago`
             });
         }
 
-        // Initialize App
         document.addEventListener('DOMContentLoaded', () => {
             renderProjects();
             renderVendors();
             renderActivity();
             updateDashboardCounters();
-            animateProgressBars(); // Trigger animation on initial load
+            animateProgressBars();
             
-            // Create Project Submit
+            // Forms Events
             document.getElementById('create-project-form').addEventListener('submit', function(e) {
                 e.preventDefault();
-                const name = document.getElementById('cp-name').value;
-                const client = document.getElementById('cp-client').value;
-                const target = parseInt(document.getElementById('cp-target').value);
                 const newId = 'PRO-' + Math.floor(1000 + Math.random() * 9000);
-
-                appData.projects.unshift({ id: newId, name: name, client: client, status: 'Active', target: target, completes: 0 });
+                appData.projects.unshift({
+                    id: newId,
+                    name: document.getElementById('cp-name').value,
+                    client: document.getElementById('cp-client').value,
+                    status: 'Active',
+                    target: parseInt(document.getElementById('cp-target').value),
+                    completes: 0
+                });
                 this.reset();
                 renderProjects();
                 updateDashboardCounters();
                 navigate('projects');
             });
 
-            // Add Vendor Submit
             document.getElementById('add-vendor-form').addEventListener('submit', function(e) {
                 e.preventDefault();
-                const name = document.getElementById('cv-name').value;
-                const email = document.getElementById('cv-email').value;
-                const newId = 'VEN-' + Math.floor(100 + Math.random() * 900);
-
-                appData.vendors.unshift({ id: newId, name: name, email: email, status: 'Active' });
+                appData.vendors.unshift({
+                    id: 'VEN-' + Math.floor(100 + Math.random() * 900),
+                    name: document.getElementById('cv-name').value,
+                    email: document.getElementById('cv-email').value,
+                    status: 'Active'
+                });
                 this.reset();
                 renderVendors();
-                alert(`Vendor ${name} added successfully!`);
             });
 
-            // Edit Project Submit
             document.getElementById('edit-project-form').addEventListener('submit', function(e) {
                 e.preventDefault();
-                const id = document.getElementById('edit-id').value;
-                const project = appData.projects.find(p => p.id === id);
+                const project = appData.projects.find(p => p.id === document.getElementById('edit-id').value);
                 if(project) {
                     project.name = document.getElementById('edit-name').value;
                     project.target = parseInt(document.getElementById('edit-target').value);
@@ -454,62 +498,73 @@
             });
         });
 
-        // Navigation Logic
+        // Navigation (MUI Styling applied to active state)
         function navigate(viewId) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            
+            // Reset Sidebar Buttons
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.className = "nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700/50";
+                btn.className = "nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100/50 dark:hover:bg-darkcard/50 transition-all";
+                const icon = btn.querySelector('.nav-icon');
+                if(icon) { icon.classList.add('text-zinc-500', 'opacity-70'); icon.classList.remove('text-brand-500', 'opacity-100'); }
             });
 
             document.getElementById(`view-${viewId}`).classList.add('active');
+            
+            // Set Active Sidebar Button
             let activeBtn = document.getElementById(`nav-${viewId}`);
             if(activeBtn) {
-                activeBtn.className = "nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400";
+                activeBtn.className = "nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl bg-zinc-100 dark:bg-darkcard text-zinc-900 dark:text-white transition-all shadow-sm border border-zinc-200/50 dark:border-transparent";
+                const icon = activeBtn.querySelector('.nav-icon');
+                if(icon) { icon.classList.remove('text-zinc-500', 'opacity-70'); icon.classList.add('text-brand-500', 'opacity-100'); }
             }
 
-            const titles = { 'dashboard': 'Dashboard Overview', 'create': 'Project Setup', 'projects': 'Project Management', 'vendor': 'Vendor Management', 'activity': 'Comprehensive Traffic Log' };
-            document.getElementById('page-title').innerText = titles[viewId];
+            const titles = { 'dashboard': 'Overview', 'create': 'Project Setup', 'projects': 'All Projects', 'vendor': 'Supply Partners', 'activity': 'Traffic Logs' };
+            document.getElementById('page-title').innerText = titles[viewId] || 'Platform';
 
-            // Re-trigger animation when navigating back to dashboard
             if (viewId === 'dashboard') {
                 resetProgressBars();
                 setTimeout(animateProgressBars, 50);
             }
         }
 
-        // --- Render Functions ---
-
+        // Render Functions
         function renderProjects() {
             const tbody = document.getElementById('projects-table-body');
             tbody.innerHTML = '';
             appData.projects.forEach(p => {
                 const percent = p.target > 0 ? Math.round((p.completes / p.target) * 100) : 0;
-                const statusBadge = p.status === 'Active' 
-                    ? '<span class="px-2.5 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800">Active</span>'
-                    : '<span class="px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400 border border-gray-200 dark:border-gray-700">Completed</span>';
+                const badge = p.status === 'Active' 
+                    ? '<span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest rounded-md bg-emerald-50 text-emerald-600 border border-emerald-200/50 dark:bg-emerald-500/10 dark:border-emerald-800/30">Active</span>'
+                    : (p.status === 'Completed' 
+                        ? '<span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest rounded-md bg-zinc-100 text-zinc-600 border border-zinc-200/50 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700">Completed</span>'
+                        : '<span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest rounded-md bg-amber-50 text-amber-600 border border-amber-200/50 dark:bg-amber-500/10 dark:border-amber-800/30">Paused</span>');
 
                 tbody.innerHTML += `
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                        <td class="px-6 py-4 text-brand-600 dark:text-brand-400 font-medium">${p.id}</td>
-                        <td class="px-6 py-4 font-medium">${p.name}</td>
-                        <td class="px-6 py-4 text-gray-500 dark:text-gray-400">${p.client}</td>
-                        <td class="px-6 py-4">${statusBadge}</td>
+                    <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition-colors group">
+                        <td class="px-6 py-4 font-mono text-xs font-semibold text-brand-600 dark:text-brand-400">${p.id}</td>
+                        <td class="px-6 py-4 font-medium text-zinc-800 dark:text-zinc-200">${p.name}</td>
+                        <td class="px-6 py-4 text-zinc-500 dark:text-zinc-400 text-sm">${p.client}</td>
+                        <td class="px-6 py-4">${badge}</td>
                         <td class="px-6 py-4">
-                            <div class="flex flex-col items-end">
-                                <span class="text-sm font-medium mb-1">${p.completes} / ${p.target}</span>
-                                <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden">
-                                    <div class="bg-brand-500 h-1.5 rounded-full progress-bar-fill" data-target="${percent}%" style="width: ${percent}%"></div>
+                            <div class="flex flex-col items-end w-32 ml-auto">
+                                <span class="text-xs font-bold mb-1.5 text-zinc-700 dark:text-zinc-300">${p.completes} / ${p.target}</span>
+                                <div class="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-1 overflow-hidden">
+                                    <div class="bg-brand-500 h-full rounded-full" style="width: ${percent}%"></div>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-center space-x-3">
-                            <button onclick="openEditModal('${p.id}')" class="text-blue-500 hover:text-blue-600 transition-colors" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button onclick="downloadProject('${p.id}')" class="text-green-500 hover:text-green-600 transition-colors" title="Download CSV"><i class="fa-solid fa-download"></i></button>
-                            <button onclick="deleteProject('${p.id}')" class="text-red-500 hover:text-red-600 transition-colors" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center justify-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onclick="openEditModal('${p.id}')" class="p-1.5 text-zinc-400 hover:text-brand-500 hover:bg-brand-50 dark:hover:bg-brand-500/10 rounded-lg transition-colors"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                                <button onclick="downloadProject('${p.id}')" class="p-1.5 text-zinc-400 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 rounded-lg transition-colors"><i data-lucide="download" class="w-4 h-4"></i></button>
+                                <button onclick="deleteProject('${p.id}')" class="p-1.5 text-zinc-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
                         </td>
                     </tr>
                 `;
             });
+            lucide.createIcons();
         }
 
         function renderVendors() {
@@ -517,46 +572,45 @@
             tbody.innerHTML = '';
             appData.vendors.forEach(v => {
                 tbody.innerHTML += `
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                        <td class="px-6 py-4 text-brand-600 dark:text-brand-400 font-medium">${v.id}</td>
-                        <td class="px-6 py-4 font-medium">${v.name}</td>
-                        <td class="px-6 py-4 text-gray-500 dark:text-gray-400">${v.email || 'N/A'}</td>
-                        <td class="px-6 py-4"><span class="px-2.5 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800">${v.status}</span></td>
+                    <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition-colors group">
+                        <td class="px-6 py-4 font-mono text-xs font-semibold text-brand-600 dark:text-brand-400">${v.id}</td>
+                        <td class="px-6 py-4 font-medium text-zinc-800 dark:text-zinc-200">${v.name}</td>
+                        <td class="px-6 py-4 text-zinc-500 dark:text-zinc-400">${v.email || '-'}</td>
+                        <td class="px-6 py-4"><span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest rounded-md bg-emerald-50 text-emerald-600 border border-emerald-200/50 dark:bg-emerald-500/10 dark:border-emerald-800/30">${v.status}</span></td>
                         <td class="px-6 py-4 text-center">
-                            <button class="text-red-500 hover:text-red-600 transition-colors" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+                            <button class="p-1.5 text-zinc-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-all"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </td>
                     </tr>
                 `;
             });
+            lucide.createIcons();
         }
 
         function renderActivity() {
-            // Dashboard Short List (First 5)
             const shortBody = document.getElementById('activity-table-body-short');
             shortBody.innerHTML = '';
             appData.activity.slice(0, 5).forEach(a => {
                 shortBody.innerHTML += `
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                        <td class="py-3 font-mono text-xs text-gray-500 dark:text-gray-400">${a.uid}</td>
-                        <td class="py-3 font-medium">${a.project}</td>
-                        <td class="py-3 ${a.color} font-medium text-xs uppercase tracking-wider">${a.status}</td>
-                        <td class="py-3 text-gray-400 text-xs">${a.time}</td>
+                    <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition-colors">
+                        <td class="px-4 py-3 font-mono text-xs text-zinc-500 dark:text-zinc-400">${a.uid}</td>
+                        <td class="px-4 py-3 font-medium text-sm text-zinc-800 dark:text-zinc-200">${a.project}</td>
+                        <td class="px-4 py-3"><span class="px-2 py-1 text-[10px] font-bold uppercase tracking-widest rounded border ${a.colorClass}">${a.status}</span></td>
+                        <td class="px-4 py-3 text-right text-zinc-400 text-xs">${a.time}</td>
                     </tr>
                 `;
             });
 
-            // Comprehensive Activity List
             const fullBody = document.getElementById('activity-table-body-full');
             fullBody.innerHTML = '';
             appData.activity.forEach(a => {
                 fullBody.innerHTML += `
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                        <td class="px-6 py-4 font-mono text-xs text-gray-500 dark:text-gray-400">${a.txId}</td>
-                        <td class="px-6 py-4 font-mono text-xs text-brand-500">${a.uid}</td>
-                        <td class="px-6 py-4 font-medium">${a.project}</td>
-                        <td class="px-6 py-4 ${a.color} font-medium text-xs uppercase tracking-wider">${a.status}</td>
-                        <td class="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs">${a.ip}</td>
-                        <td class="px-6 py-4 text-gray-400 text-xs">${a.time}</td>
+                    <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition-colors">
+                        <td class="px-6 py-4 font-mono text-xs text-zinc-400">${a.txId}</td>
+                        <td class="px-6 py-4 font-mono text-xs font-semibold text-brand-500">${a.uid}</td>
+                        <td class="px-6 py-4 font-medium text-zinc-800 dark:text-zinc-200">${a.project}</td>
+                        <td class="px-6 py-4"><span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest rounded border ${a.colorClass}">${a.status}</span></td>
+                        <td class="px-6 py-4 font-mono text-zinc-500 dark:text-zinc-400 text-xs">${a.ip}</td>
+                        <td class="px-6 py-4 text-right text-zinc-400 text-xs">${a.time}</td>
                     </tr>
                 `;
             });
@@ -566,55 +620,37 @@
             const activeCount = appData.projects.filter(p => p.status === 'Active').length;
             let totalCompletes = 0;
             appData.projects.forEach(p => totalCompletes += p.completes);
-            
             document.getElementById('dash-active-count').innerText = activeCount;
-            // Update completes visually (adding base amount for demo visual appeal)
             document.getElementById('dash-completes').innerText = (2840 + totalCompletes).toLocaleString();
         }
 
-        // --- Animations ---
-        
         function animateProgressBars() {
             setTimeout(() => {
                 document.querySelectorAll('.progress-bar-fill').forEach(bar => {
                     const targetWidth = bar.getAttribute('data-target');
-                    if (targetWidth) {
-                        bar.style.width = targetWidth;
-                    }
+                    if (targetWidth) bar.style.width = targetWidth;
                 });
-            }, 100);
+            }, 50);
         }
 
         function resetProgressBars() {
-            document.querySelectorAll('.progress-bar-fill').forEach(bar => {
-                bar.style.width = '0%';
-            });
+            document.querySelectorAll('.progress-bar-fill').forEach(bar => bar.style.width = '0%');
         }
 
-        // --- Action Logic ---
-
+        // Modals & Actions
         function deleteProject(id) {
-            if(confirm(`Are you sure you want to permanently delete project ${id}?`)) {
+            if(confirm(`Permantly delete ${id}?`)) {
                 appData.projects = appData.projects.filter(p => p.id !== id);
-                renderProjects();
-                updateDashboardCounters();
+                renderProjects(); updateDashboardCounters();
             }
         }
 
         function downloadProject(id) {
-            // Generate dummy CSV content
-            const csvContent = "data:text/csv;charset=utf-8,UID,Status,Timestamp\n" 
-                + appData.activity.filter(a => a.project === id)
-                .map(a => `${a.uid},${a.status},${a.time}`)
-                .join("\n");
-            
-            const encodedUri = encodeURI(csvContent);
+            const csv = "data:text/csv;charset=utf-8,UID,Status,Timestamp\n" + appData.activity.filter(a => a.project === id).map(a => `${a.uid},${a.status},${a.time}`).join("\n");
             const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `${id}_export.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            link.setAttribute("href", encodeURI(csv));
+            link.setAttribute("download", `${id}_data.csv`);
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
 
         function openEditModal(id) {
@@ -625,33 +661,44 @@
                 document.getElementById('edit-target').value = project.target;
                 document.getElementById('edit-status').value = project.status;
                 
-                document.getElementById('edit-modal').classList.remove('hidden');
+                const modal = document.getElementById('edit-modal');
+                const content = document.getElementById('edit-modal-content');
+                modal.classList.remove('hidden');
+                // Trigger reflow for animation
+                void modal.offsetWidth; 
+                modal.classList.add('opacity-100');
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
             }
         }
 
         function closeEditModal() {
-            document.getElementById('edit-modal').classList.add('hidden');
+            const modal = document.getElementById('edit-modal');
+            const content = document.getElementById('edit-modal-content');
+            modal.classList.remove('opacity-100');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
         }
 
-        // Theme Toggle
+        // Theme Toggle (Modern execution)
         function toggleTheme() {
             const html = document.documentElement;
-            const icon = document.getElementById('theme-icon');
             const text = document.getElementById('theme-text');
+            const isDark = html.classList.contains('dark');
             
-            if (html.classList.contains('dark')) {
-                // Switch to Light Mode
-                html.classList.remove('dark');
-                icon.classList.replace('fa-sun', 'fa-moon');
-                icon.classList.replace('text-yellow-500', 'text-gray-600');
-                text.innerText = 'Dark Mode';
-            } else {
-                // Switch to Dark Mode
-                html.classList.add('dark');
-                icon.classList.replace('fa-moon', 'fa-sun');
-                icon.classList.replace('text-gray-600', 'text-yellow-500');
-                text.innerText = 'Light Mode';
-            }
+            html.classList.toggle('dark');
+            
+            // Re-render icon to swap sun/moon
+            const newIconData = isDark ? 'moon' : 'sun';
+            const iconHTML = `<i id="theme-icon" data-lucide="${newIconData}" class="w-4 h-4 ${isDark ? 'text-zinc-600 group-hover:text-brand-500' : 'text-zinc-400 group-hover:text-amber-500'} transition-colors"></i>`;
+            
+            const btn = document.getElementById('theme-icon').parentNode;
+            document.getElementById('theme-icon').remove();
+            btn.insertAdjacentHTML('afterbegin', iconHTML);
+            lucide.createIcons();
+            
+            text.innerText = isDark ? 'Dark' : 'Light';
         }
     </script>
 </body>
