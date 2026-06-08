@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample Management Platform Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 500: '#6366f1', 600: '#4f46e5' }, 
+                        darkbase: '#0f172a', 
+                        darkcard: '#1e293b'  
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body, div, span, a, input, select, button { transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Modal Background Fade */
+        .modal-overlay { background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-darkbase dark:text-gray-100 h-screen flex overflow-hidden">
+
+    <aside class="w-64 bg-white dark:bg-darkcard border-r border-gray-200 dark:border-gray-700 flex flex-col z-20">
+        <div class="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700">
+            <i class="fa-solid fa-chart-network text-brand-500 text-xl mr-3"></i>
+            <span class="font-bold text-lg tracking-wide">SampleFlow</span>
+        </div>
+        <nav class="flex-1 py-4 px-3 space-y-1">
+            <button onclick="navigate('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400">
+                <i class="fa-solid fa-table-columns w-6"></i> Dashboard
+            </button>
+            <button onclick="navigate('create')" id="nav-create" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700/50">
+                <i class="fa-solid fa-folder-plus w-6"></i> Create Project
+            </button>
+            <button onclick="navigate('projects')" id="nav-projects" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700/50">
+                <i class="fa-solid fa-list-check w-6"></i> All Projects
+            </button>
+            <button onclick="navigate('vendor')" id="nav-vendor" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700/50">
+                <i class="fa-solid fa-users-gear w-6"></i> Add Vendor
+            </button>
+            <button onclick="navigate('activity')" id="nav-activity" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700/50 hidden">
+                Activity Log
+            </button>
+        </nav>
+        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+            <button class="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400">
+                <i class="fa-solid fa-arrow-right-from-bracket w-6"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto relative">
+        <header class="h-16 flex items-center justify-between px-8 bg-white/80 dark:bg-darkbase/80 backdrop-blur-md sticky top-0 z-10 border-b border-gray-200 dark:border-gray-800">
+            <h1 id="page-title" class="text-xl font-semibold">Dashboard Overview</h1>
+            <div class="flex items-center space-x-4">
+                <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 focus:outline-none transition-colors">
+                    <i id="theme-icon" class="fa-solid fa-sun text-yellow-500 text-lg"></i>
+                </button>
+                <div class="h-8 w-8 rounded-full bg-brand-500 text-white flex items-center justify-center font-bold shadow-lg">
+                    A
+                </div>
+            </div>
+        </header>
+
+        <div class="p-8 max-w-7xl mx-auto w-full">
+            
+            <div id="view-dashboard" class="view-section active space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">TOTAL CLICKS</p>
+                                <h3 class="text-3xl font-bold mt-2" id="dash-clicks">12,450</h3>
+                            </div>
+                            <div class="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-500"><i class="fa-solid fa-hand-pointer"></i></div>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">COMPLETES</p>
+                                <h3 class="text-3xl font-bold mt-2 text-green-600 dark:text-green-400" id="dash-completes">2,840</h3>
+                            </div>
+                            <div class="p-2 bg-green-50 dark:bg-green-900/30 rounded-lg text-green-500"><i class="fa-solid fa-circle-check"></i></div>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">INCIDENCE RATE</p>
+                                <h3 class="text-3xl font-bold mt-2">22.8%</h3>
+                            </div>
+                            <div class="p-2 bg-purple-50 dark:bg-purple-900/30 rounded-lg text-purple-500"><i class="fa-solid fa-chart-line"></i></div>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">ACTIVE PROJECTS</p>
+                                <h3 class="text-3xl font-bold mt-2" id="dash-active-count">0</h3>
+                            </div>
+                            <div class="p-2 bg-orange-50 dark:bg-orange-900/30 rounded-lg text-orange-500"><i class="fa-solid fa-folder-open"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 lg:col-span-1">
+                        <h4 class="font-semibold mb-4 text-gray-700 dark:text-gray-200">Status Breakdown</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm mb-1"><span class="text-gray-500">Completes</span><span class="font-medium">2,840</span></div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2"><div class="bg-green-500 h-2 rounded-full" style="width: 45%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1"><span class="text-gray-500">Terminates</span><span class="font-medium">8,100</span></div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2"><div class="bg-red-500 h-2 rounded-full" style="width: 70%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1"><span class="text-gray-500">Quota Full</span><span class="font-medium">1,200</span></div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2"><div class="bg-yellow-500 h-2 rounded-full" style="width: 20%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1"><span class="text-gray-500">Security / Bots</span><span class="font-medium">310</span></div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2"><div class="bg-gray-500 h-2 rounded-full" style="width: 8%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 lg:col-span-2 overflow-x-auto flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-semibold text-gray-700 dark:text-gray-200">Recent Activity</h4>
+                            <button onclick="navigate('activity')" class="text-sm text-brand-500 hover:text-brand-600 font-medium">View all &rarr;</button>
+                        </div>
+                        <div class="flex-1">
+                            <table class="w-full text-left text-sm">
+                                <thead class="text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
+                                    <tr>
+                                        <th class="pb-3 font-medium">UID</th>
+                                        <th class="pb-3 font-medium">Project</th>
+                                        <th class="pb-3 font-medium">Status</th>
+                                        <th class="pb-3 font-medium">Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100 dark:divide-gray-800" id="activity-table-body-short">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-activity" class="view-section">
+                <div class="bg-white dark:bg-darkcard rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
+                        <h3 class="font-semibold">Comprehensive Traffic Log</h3>
+                        <div class="relative w-64">
+                            <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400"></i>
+                            <input type="text" placeholder="Search UID or Project..." class="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg outline-none focus:border-brand-500 text-sm">
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto h-[600px] overflow-y-auto">
+                        <table class="w-full text-left text-sm whitespace-nowrap">
+                            <thead class="bg-white dark:bg-darkcard text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 sticky top-0 shadow-sm z-10">
+                                <tr>
+                                    <th class="px-6 py-4 font-medium">Transaction ID</th>
+                                    <th class="px-6 py-4 font-medium">Respondent UID</th>
+                                    <th class="px-6 py-4 font-medium">Project ID</th>
+                                    <th class="px-6 py-4 font-medium">Status</th>
+                                    <th class="px-6 py-4 font-medium">IP Address</th>
+                                    <th class="px-6 py-4 font-medium">Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 dark:divide-gray-800" id="activity-table-body-full">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-create" class="view-section max-w-4xl">
+                <form id="create-project-form" class="space-y-6">
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <h3 class="text-lg font-semibold mb-4 border-b border-gray-200 dark:border-gray-700 pb-2"><i class="fa-solid fa-circle-info text-brand-500 mr-2"></i>Project Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Public Survey Name *</label>
+                                <input type="text" id="cp-name" required placeholder="e.g. Wellness Study 2024" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Client *</label>
+                                <select id="cp-client" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
+                                    <option value="">-- Select Client --</option>
+                                    <option value="Acme Corp">Acme Corp</option>
+                                    <option value="Global Insights">Global Insights</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Project Type</label>
+                                <select class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
+                                    <option>Programmatic</option>
+                                    <option>Manual</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Survey Type</label>
+                                <select class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
+                                    <option>B2C</option>
+                                    <option>B2B</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <h3 class="text-lg font-semibold mb-4 border-b border-gray-200 dark:border-gray-700 pb-2"><i class="fa-solid fa-chart-simple text-brand-500 mr-2"></i>Sample Specifications</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Completes</label>
+                                <input type="number" id="cp-target" required value="100" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">CPI ($)</label>
+                                <input type="number" step="0.01" value="2.50" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Estimated IR (%)</label>
+                                <input type="number" value="50" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">LOI (mins)</label>
+                                <input type="number" value="10" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 outline-none focus:border-brand-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <h3 class="text-lg font-semibold mb-4 border-b border-gray-200 dark:border-gray-700 pb-2"><i class="fa-solid fa-link text-brand-500 mr-2"></i>Client Survey Link</h3>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Live URL *</label>
+                            <input type="url" required placeholder="https://client-survey.com/start?pid=[PID]&uid=[UID]" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 outline-none focus:border-brand-500 font-mono text-sm">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-4 mt-8">
+                        <button type="button" onclick="navigate('dashboard')" class="px-6 py-2.5 rounded-lg font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Cancel</button>
+                        <button type="submit" class="px-6 py-2.5 rounded-lg font-medium bg-brand-600 hover:bg-brand-500 text-white shadow-lg shadow-brand-500/30 transition-all">Launch Project</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="view-projects" class="view-section">
+                <div class="bg-white dark:bg-darkcard rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
+                        <div class="relative w-64">
+                            <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400"></i>
+                            <input type="text" placeholder="Search projects..." class="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg outline-none focus:border-brand-500 text-sm">
+                        </div>
+                        <button onclick="navigate('create')" class="bg-brand-600 hover:bg-brand-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">+ New Project</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm whitespace-nowrap">
+                            <thead class="bg-gray-50 dark:bg-gray-800/80 text-gray-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
+                                <tr>
+                                    <th class="px-6 py-4 font-semibold">Project ID</th>
+                                    <th class="px-6 py-4 font-semibold">Name</th>
+                                    <th class="px-6 py-4 font-semibold">Client</th>
+                                    <th class="px-6 py-4 font-semibold">Status</th>
+                                    <th class="px-6 py-4 font-semibold text-right">Progress</th>
+                                    <th class="px-6 py-4 font-semibold text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="projects-table-body">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-vendor" class="view-section max-w-5xl mx-auto space-y-8">
+                <form id="add-vendor-form" class="bg-white dark:bg-darkcard p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <h3 class="text-lg font-semibold mb-4 border-b border-gray-200 dark:border-gray-700 pb-2"><i class="fa-solid fa-user-plus text-brand-500 mr-2"></i>Register New Vendor</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Vendor Name *</label>
+                            <input type="text" id="cv-name" required placeholder="e.g. SampleCube" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 outline-none focus:border-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Contact Email</label>
+                            <input type="email" id="cv-email" placeholder="api@vendor.com" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 outline-none focus:border-brand-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Postback / S2S URL</label>
+                            <input type="url" placeholder="https://vendor.com/postback?uid=[UID]&status=[STATUS]" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 outline-none focus:border-brand-500 font-mono text-sm">
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end">
+                        <button type="submit" class="px-6 py-2.5 rounded-lg font-medium bg-brand-600 hover:bg-brand-500 text-white transition-all">Add Vendor</button>
+                    </div>
+                </form>
+
+                <div class="bg-white dark:bg-darkcard rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                        <h3 class="font-semibold text-gray-700 dark:text-gray-200">Active Vendors</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 dark:bg-gray-800/80 text-gray-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
+                                <tr>
+                                    <th class="px-6 py-4 font-semibold">Vendor ID</th>
+                                    <th class="px-6 py-4 font-semibold">Vendor Name</th>
+                                    <th class="px-6 py-4 font-semibold">Contact Email</th>
+                                    <th class="px-6 py-4 font-semibold">Status</th>
+                                    <th class="px-6 py-4 font-semibold text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="vendors-table-body">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="edit-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay hidden">
+        <div class="bg-white dark:bg-darkcard rounded-xl shadow-2xl w-full max-w-md border border-gray-200 dark:border-gray-700 transform transition-all">
+            <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Edit Project</h3>
+                <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <form id="edit-project-form" class="p-6 space-y-4">
+                <input type="hidden" id="edit-id">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Project Name</label>
+                    <input type="text" id="edit-name" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 outline-none focus:border-brand-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Completes</label>
+                    <input type="number" id="edit-target" required class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 outline-none focus:border-brand-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
+                    <select id="edit-status" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 outline-none focus:border-brand-500">
+                        <option value="Active">Active</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 rounded-lg font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg font-medium bg-brand-600 hover:bg-brand-500 text-white transition-colors">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // State Management Data
+        let appData = {
+            projects: [
+                { id: 'PRO-1024', name: 'E-Commerce Tracker Q1', client: 'Acme Corp', status: 'Active', target: 500, completes: 342 },
+                { id: 'PRO-1025', name: 'Healthcare Survey', client: 'Global Insights', status: 'Active', target: 1000, completes: 12 },
+                { id: 'PRO-1022', name: 'Automotive Study', client: 'Ford', status: 'Completed', target: 300, completes: 300 },
+            ],
+            vendors: [
+                { id: 'VEN-001', name: 'Cint', email: 'api@cint.com', status: 'Active' },
+                { id: 'VEN-002', name: 'Lucid', email: 'supply@lucid.com', status: 'Active' }
+            ],
+            activity: []
+        };
+
+        // Generate extensive dummy activity data
+        const statuses = ['Complete', 'Terminate', 'Quota Full', 'Security'];
+        const colors = { 'Complete': 'text-green-500', 'Terminate': 'text-red-500', 'Quota Full': 'text-yellow-500', 'Security': 'text-gray-500' };
+        for(let i = 0; i < 25; i++) {
+            let stat = statuses[Math.floor(Math.random() * statuses.length)];
+            appData.activity.push({
+                txId: 'TXN-' + Math.floor(Math.random() * 900000 + 100000),
+                uid: 'usr_' + Math.random().toString(36).substr(2, 6),
+                project: i % 2 === 0 ? 'PRO-1024' : 'PRO-1025',
+                status: stat,
+                color: colors[stat],
+                ip: `192.168.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`,
+                time: `${Math.floor(Math.random() * 60)} mins ago`
+            });
+        }
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProjects();
+            renderVendors();
+            renderActivity();
+            updateDashboardCounters();
+            
+            // Create Project Submit
+            document.getElementById('create-project-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('cp-name').value;
+                const client = document.getElementById('cp-client').value;
+                const target = parseInt(document.getElementById('cp-target').value);
+                const newId = 'PRO-' + Math.floor(1000 + Math.random() * 9000);
+
+                appData.projects.unshift({ id: newId, name: name, client: client, status: 'Active', target: target, completes: 0 });
+                this.reset();
+                renderProjects();
+                updateDashboardCounters();
+                navigate('projects');
+            });
+
+            // Add Vendor Submit
+            document.getElementById('add-vendor-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('cv-name').value;
+                const email = document.getElementById('cv-email').value;
+                const newId = 'VEN-' + Math.floor(100 + Math.random() * 900);
+
+                appData.vendors.unshift({ id: newId, name: name, email: email, status: 'Active' });
+                this.reset();
+                renderVendors();
+                alert(`Vendor ${name} added successfully!`);
+            });
+
+            // Edit Project Submit
+            document.getElementById('edit-project-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const id = document.getElementById('edit-id').value;
+                const project = appData.projects.find(p => p.id === id);
+                if(project) {
+                    project.name = document.getElementById('edit-name').value;
+                    project.target = parseInt(document.getElementById('edit-target').value);
+                    project.status = document.getElementById('edit-status').value;
+                    renderProjects();
+                    updateDashboardCounters();
+                    closeEditModal();
+                }
+            });
+        });
+
+        // Navigation Logic
+        function navigate(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.className = "nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700/50";
+            });
+
+            document.getElementById(`view-${viewId}`).classList.add('active');
+            let activeBtn = document.getElementById(`nav-${viewId}`);
+            if(activeBtn) {
+                activeBtn.className = "nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400";
+            }
+
+            const titles = { 'dashboard': 'Dashboard Overview', 'create': 'Project Setup', 'projects': 'Project Management', 'vendor': 'Vendor Management', 'activity': 'Comprehensive Traffic Log' };
+            document.getElementById('page-title').innerText = titles[viewId];
+        }
+
+        // --- Render Functions ---
+
+        function renderProjects() {
+            const tbody = document.getElementById('projects-table-body');
+            tbody.innerHTML = '';
+            appData.projects.forEach(p => {
+                const percent = p.target > 0 ? Math.round((p.completes / p.target) * 100) : 0;
+                const statusBadge = p.status === 'Active' 
+                    ? '<span class="px-2.5 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800">Active</span>'
+                    : '<span class="px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400 border border-gray-200 dark:border-gray-700">Completed</span>';
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                        <td class="px-6 py-4 text-brand-600 dark:text-brand-400 font-medium">${p.id}</td>
+                        <td class="px-6 py-4 font-medium">${p.name}</td>
+                        <td class="px-6 py-4 text-gray-500 dark:text-gray-400">${p.client}</td>
+                        <td class="px-6 py-4">${statusBadge}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex flex-col items-end">
+                                <span class="text-sm font-medium mb-1">${p.completes} / ${p.target}</span>
+                                <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                                    <div class="bg-brand-500 h-1.5 rounded-full" style="width: ${percent}%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-center space-x-3">
+                            <button onclick="openEditModal('${p.id}')" class="text-blue-500 hover:text-blue-600 transition-colors" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="downloadProject('${p.id}')" class="text-green-500 hover:text-green-600 transition-colors" title="Download CSV"><i class="fa-solid fa-download"></i></button>
+                            <button onclick="deleteProject('${p.id}')" class="text-red-500 hover:text-red-600 transition-colors" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderVendors() {
+            const tbody = document.getElementById('vendors-table-body');
+            tbody.innerHTML = '';
+            appData.vendors.forEach(v => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                        <td class="px-6 py-4 text-brand-600 dark:text-brand-400 font-medium">${v.id}</td>
+                        <td class="px-6 py-4 font-medium">${v.name}</td>
+                        <td class="px-6 py-4 text-gray-500 dark:text-gray-400">${v.email || 'N/A'}</td>
+                        <td class="px-6 py-4"><span class="px-2.5 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800">${v.status}</span></td>
+                        <td class="px-6 py-4 text-center">
+                            <button class="text-red-500 hover:text-red-600" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderActivity() {
+            // Dashboard Short List (First 5)
+            const shortBody = document.getElementById('activity-table-body-short');
+            shortBody.innerHTML = '';
+            appData.activity.slice(0, 5).forEach(a => {
+                shortBody.innerHTML += `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                        <td class="py-3 font-mono text-xs text-gray-500 dark:text-gray-400">${a.uid}</td>
+                        <td class="py-3 font-medium">${a.project}</td>
+                        <td class="py-3 ${a.color} font-medium text-xs uppercase tracking-wider">${a.status}</td>
+                        <td class="py-3 text-gray-400 text-xs">${a.time}</td>
+                    </tr>
+                `;
+            });
+
+            // Comprehensive Activity List
+            const fullBody = document.getElementById('activity-table-body-full');
+            fullBody.innerHTML = '';
+            appData.activity.forEach(a => {
+                fullBody.innerHTML += `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                        <td class="px-6 py-4 font-mono text-xs text-gray-500 dark:text-gray-400">${a.txId}</td>
+                        <td class="px-6 py-4 font-mono text-xs text-brand-500">${a.uid}</td>
+                        <td class="px-6 py-4 font-medium">${a.project}</td>
+                        <td class="px-6 py-4 ${a.color} font-medium text-xs uppercase tracking-wider">${a.status}</td>
+                        <td class="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs">${a.ip}</td>
+                        <td class="px-6 py-4 text-gray-400 text-xs">${a.time}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateDashboardCounters() {
+            const activeCount = appData.projects.filter(p => p.status === 'Active').length;
+            let totalCompletes = 0;
+            appData.projects.forEach(p => totalCompletes += p.completes);
+            
+            document.getElementById('dash-active-count').innerText = activeCount;
+            // Update completes visually (adding base amount for demo visual appeal)
+            document.getElementById('dash-completes').innerText = (2840 + totalCompletes).toLocaleString();
+        }
+
+        // --- Action Logic ---
+
+        function deleteProject(id) {
+            if(confirm(`Are you sure you want to permanently delete project ${id}?`)) {
+                appData.projects = appData.projects.filter(p => p.id !== id);
+                renderProjects();
+                updateDashboardCounters();
+            }
+        }
+
+        function downloadProject(id) {
+            // Generate dummy CSV content
+            const csvContent = "data:text/csv;charset=utf-8,UID,Status,Timestamp\n" 
+                + appData.activity.filter(a => a.project === id)
+                .map(a => `${a.uid},${a.status},${a.time}`)
+                .join("\n");
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `${id}_export.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function openEditModal(id) {
+            const project = appData.projects.find(p => p.id === id);
+            if(project) {
+                document.getElementById('edit-id').value = project.id;
+                document.getElementById('edit-name').value = project.name;
+                document.getElementById('edit-target').value = project.target;
+                document.getElementById('edit-status').value = project.status;
+                
+                document.getElementById('edit-modal').classList.remove('hidden');
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+        }
+
+        // Theme Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                icon.classList.replace('fa-sun', 'fa-moon');
+                icon.classList.replace('text-yellow-500', 'text-gray-600');
+            } else {
+                html.classList.add('dark');
+                icon.classList.replace('fa-moon', 'fa-sun');
+                icon.classList.replace('text-gray-600', 'text-yellow-500');
+            }
+        }
+    </script>
+</body>
+</html>
